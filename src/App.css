@@ -1,3 +1,7 @@
+body {
+  overflow-x: hidden;
+}
+
 .App {
   text-align: center;
 }
@@ -35,4 +39,9 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+button.btn-primary {
+  background-color:#3463c0;
+  border-color: #3463c0;
 }
