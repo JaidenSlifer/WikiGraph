@@ -1,7 +1,11 @@
-import React, { FC, useState, ChangeEvent, MouseEvent } from "react";
+import React, { FC, useState, ChangeEvent } from "react";
 import { searchWikiPages, getPageLinks, IWikiLink } from "../services/wikiAPIService";
+import { initGraph } from "../services/drawGraphService";
+import Graph from "graphology";
+import _ from 'lodash';
+import { MAX_SURROUNDING_NODES } from "../services/globals";
 
-const HeaderComponent: FC = () => {
+const HeaderComponent: FC<{drawGraph: (graph: Graph) => void}> = (props) => {
 
   const [pageState, setPageState] = useState('');
 
@@ -27,29 +31,26 @@ const HeaderComponent: FC = () => {
   };
 
   const handleDrawGraph = () => {
-    let linkList: IWikiLink[] = [];
+    let linkList: string[] = [];
     
-    getPageLinks('Albert Einstein')
+    getPageLinks(pageState)
     .then(links => {
-      linkList = links.links.filter(elem => elem.exists && elem.ns == 0);
+      linkList = links.links.filter(elem => elem.exists && elem.ns === 0).map(elem => elem.title);
+
+      let sample = _.sampleSize(linkList, MAX_SURROUNDING_NODES);
+      
+      let graph = initGraph(pageState, sample);
+
+      props.drawGraph(graph);
     })
     .catch(err => console.error(err));
   };
-
-  // const test = () => {
-  //   getPageLinks('Albert Einstein')
-  //   .then(links => {
-  //     console.log(links);
-  //   })
-  //   .catch(err => console.error(err));
-  // };
 
   return (
     <div className="input-group">
       <button className="btn btn-primary" onClick={handleWikiSearch}>Search Wikipedia</button>
       <input type="text" className="form-control" placeholder="Wiki Page" value={pageState} onChange={handlePageChange} autoFocus/>
       <button className="btn btn-primary" onClick={handleDrawGraph}>Draw Graph</button>
-      {/* <button className="btn btn-primary" onClick={test}>Test</button> */}
     </div>
   );
 }

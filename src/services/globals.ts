@@ -1,0 +1,1 @@
+export const MAX_SURROUNDING_NODES = 5; // TODO: User input for sample size

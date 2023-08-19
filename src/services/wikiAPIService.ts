@@ -39,19 +39,17 @@ const getParams: IWikiAPIParams = {
 
 const baseUrl = 'https://en.wikipedia.org/w/api.php?';
 
-const sanitize = (str: string): string => {
-  let elem = document.createElement("div");
-  elem.innerText = elem.textContent = str;
-  str = elem.innerHTML;
-  str = str.replace(' ', '_');
-  return str;
-}
-
+/**
+ * Searches the wikipedia API for pages matching the search text
+ * @param searchText Text to search for
+ * @param params Query parameters
+ * @returns A promise that resolves to the json response
+ */
 export const searchWikiPages = (searchText: string, params?: IWikiAPIParams): Promise<(string | string[])[]> => {
   if (!params) { params = searchParams; }
   if (searchText.length <= 0) { return Promise.reject('Search text must be defined'); }
 
-  params.search = sanitize(searchText);
+  params.search = encodeURIComponent(searchText);
 
   let query = baseUrl;
 
@@ -64,11 +62,17 @@ export const searchWikiPages = (searchText: string, params?: IWikiAPIParams): Pr
   return fetch(query).then(res => res.json()).catch(err => console.error(err));
 }
 
+/**
+ * Gets all the links from one wikipedia page
+ * @param pageName Page to retrieve links from
+ * @param params Query parameters
+ * @returns A Promise that resolves to the (partially cleaned) json response
+ */
 export const getPageLinks = (pageName: string, params?: IWikiAPIParams): Promise<{links: IWikiLink[], pageid: number, title: string}> => {
   if (!params) { params = getParams; }
   if (pageName.length <= 0) { return Promise.reject('Page name must be defined'); }
 
-  params.page = sanitize(pageName);
+  params.page = encodeURIComponent(pageName);
 
   let query = baseUrl;
 
