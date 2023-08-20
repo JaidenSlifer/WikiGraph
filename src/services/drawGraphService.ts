@@ -40,7 +40,7 @@ export const addToNode = (addToNode: string, links: string[], graph: Graph) => {
 
   let edgeAngles: {edge: string, angle: number}[] = [];
   edges.forEach(edge => {
-    let target = edge.replace(addToNode, '').replace('->', '');
+    let target = edge.substring(0, edge.search('->'));
     let targetAttr = graph.getNodeAttributes(target);
 
     let dx = targetAttr.x - sourceAttr.x;
