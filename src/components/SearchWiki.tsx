@@ -8,7 +8,7 @@ interface ISearchResults {
   searchText: string
 }
 
-const SearchWikiComponent: FC<{searchText: string, modalSelect: (page: string) => void}> = (props) => {
+const SearchWikiComponent: FC<{searchText: string, modalSelect: (page: string) => void, showError: (errMsg: string) => void}> = (props) => {
 
   const [results, setResults] = useState({} as ISearchResults);
   const [show, setShow] = useState(false);
@@ -20,6 +20,8 @@ const SearchWikiComponent: FC<{searchText: string, modalSelect: (page: string) =
 
     searchWikiPages(modal ? modalSearchText : props.searchText)
     .then(pages => { 
+      if(!pages || pages.length < 1) { props.showError(`Page '${modal ? modalSearchText : props.searchText}' returned no results`); return; }
+
       result.searchText = pages[0] ? pages[0] as string : '';
       result.names = pages[1] ? pages[1] as string[] : [];
       result.links = pages[3] ? pages[3] as string[] : [];
@@ -27,7 +29,7 @@ const SearchWikiComponent: FC<{searchText: string, modalSelect: (page: string) =
       setModalSearchText(result.searchText);
       setShow(true);
     })
-    .catch(err => console.error(err));
+    .catch(err => props.showError(err));
 
   };
 

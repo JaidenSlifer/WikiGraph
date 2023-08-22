@@ -1,8 +1,9 @@
 ## Features
 * ~~Add click on node functionality~~
-* Add user controlled number of links for initial graph
+* ~~Add user controlled number of links for initial graph~~
 * Add refresh links button (add connections between already rendered pages)
-* Add Drag and Drop functionality
+* ~~Add Drag and Drop functionality~~ **Fix Drag Drop bugginess**
+* ~~Add error checking for invalid wiki pages (when directly drawing graph)~~
 
 ## Brainstorm
 * ~~Figure out how to display wiki search results~~ <- added modal

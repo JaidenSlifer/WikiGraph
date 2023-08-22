@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import '@popperjs/core';
+import 'bootstrap';
+
 import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 import "@react-sigma/core/lib/react-sigma.min.css";
