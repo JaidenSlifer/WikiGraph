@@ -9,16 +9,20 @@ import { Toast, ToastContainer } from 'react-bootstrap';
 function App() {
   
   let [graph, setGraph] = useState(new Graph());
+
   let [showError, setShowError] = useState(false);
   let [errorMsg, setErrorMsg] = useState('');
+
+  let [showNotif, setShowNotif] = useState(false);
+  let [notifMsg, setNotifMsg] = useState('');
 
   const drawGraphCallback = (g: Graph) => {
     let graph = Graph.from(g); // give the state a different object ref so it knows to rerender
     setGraph(graph);
   };
 
-  const showErrorCallback = (errMsg: string) => {
-    setErrorMsg(errMsg);
+  const showErrorCallback = (msg: string) => {
+    setErrorMsg(msg);
     setShowError(true);
   };
 
@@ -26,11 +30,21 @@ function App() {
     setShowError(false);
     setErrorMsg('');
   };
+
+  const showNotifCallback = (msg: string) => {
+    setNotifMsg(msg);
+    setShowNotif(true);
+  }
+
+  const handleCloseNotif = () => {
+    setShowNotif(false);
+    setNotifMsg('');
+  }
   
   return (
     <div className="row justify-content-center">
       <div className="mt-2" style={{ height: "5vh", width: "50vw" }}>
-        <HeaderComponent drawGraph={drawGraphCallback} showError={showErrorCallback}/>
+        <HeaderComponent graph={graph} drawGraph={drawGraphCallback} showError={showErrorCallback} showNotif={showNotifCallback} />
       </div>
       <div style={{ height: "95vh", width: "100vw" }}>
         <GraphComponent graph={graph} drawGraph={drawGraphCallback}/>
@@ -42,6 +56,11 @@ function App() {
           </Toast.Header>
           <Toast.Body>
             <span className="text-light">{errorMsg}</span>
+          </Toast.Body>
+        </Toast>
+        <Toast onClose={handleCloseNotif} show={showNotif} delay={3000} bg="success" autohide>
+          <Toast.Body>
+            <h4 className="text-light">{notifMsg}</h4>
           </Toast.Body>
         </Toast>
       </ToastContainer>

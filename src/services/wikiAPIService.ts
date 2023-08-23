@@ -68,7 +68,7 @@ export const searchWikiPages = (searchText: string, params?: IWikiAPIParams): Pr
  * @param params Query parameters
  * @returns A Promise that resolves to the (partially cleaned) json response
  */
-export const getPageLinks = (pageName: string, params?: IWikiAPIParams): Promise<{links: IWikiLink[], pageid: number, title: string}> => {
+export const getPageLinks = (pageName: string, params?: IWikiAPIParams): Promise<IWikiLink[]> => {
   if (!params) { params = getParams; }
   if (pageName.length <= 0) { return Promise.reject('Page name must be defined'); }
 
@@ -82,5 +82,6 @@ export const getPageLinks = (pageName: string, params?: IWikiAPIParams): Promise
 
   query += 'origin=*';
   
-  return fetch(query).then(res => res.json()).then(json => json.parse).catch(err => console.error(err));
+  // only gives the links, not the requested page's name and id
+  return fetch(query).then(res => res.json()).then(json => json.parse.links).catch(err => console.error(err));
 }

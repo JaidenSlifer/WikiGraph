@@ -6,8 +6,14 @@ import _ from 'lodash';
 import { MAX_SURROUNDING_NODES, setGlobalSurroundingNodes } from "../services/globals";
 import SearchWikiComponent from "./SearchWiki";
 import { DropdownButton, Dropdown } from "react-bootstrap";
+import { RefreshEdgesComponent } from "./RefreshEdges";
 
-const HeaderComponent: FC<{drawGraph: (graph: Graph) => void, showError: (errMsg: string) => void}> = (props) => {
+const HeaderComponent: FC<{
+  graph: Graph,
+  drawGraph: (graph: Graph) => void,
+  showError: (msg: string) => void,
+  showNotif: (msg: string) => void,
+}> = (props) => {
 
   const [pageState, setPageState] = useState('');
 
@@ -19,21 +25,18 @@ const HeaderComponent: FC<{drawGraph: (graph: Graph) => void, showError: (errMsg
   };
 
   const handleDrawGraph = (event?: MouseEvent<HTMLButtonElement>, page?: string) => {
-    let linkList: string[] = [];
     
-    getPageLinks(page ? page : pageState)
-    .then(links => {
-      if(!links) { props.showError(`Page '${page ? page : pageState}' does not exist`); return; }
+    getPageLinks(page ? page : pageState).then(wikiLinks => {
+      if(!wikiLinks) { props.showError(`Page '${page ? page : pageState}' does not exist`); return; }
 
-      linkList = links.links.filter(elem => elem.exists && elem.ns === 0).map(elem => elem.title);
+      let links = wikiLinks.filter(elem => elem.exists && elem.ns === 0).map(elem => elem.title);
 
-      let sample = _.sampleSize(linkList, MAX_SURROUNDING_NODES);
+      let sample = _.sampleSize(links, MAX_SURROUNDING_NODES);
       
-      let graph = initGraph(links.title, sample);
+      let graph = initGraph(page ? page : pageState, sample);
 
       props.drawGraph(graph);
-    })
-    .catch(err => props.showError(err));
+    }).catch(err => props.showError(err));
   };
   
   const modalSelectCallback = (page: string) => {
@@ -46,6 +49,13 @@ const HeaderComponent: FC<{drawGraph: (graph: Graph) => void, showError: (errMsg
     setGlobalSurroundingNodes(num);
   }
 
+  const refreshEdgesCallback = (refreshPromise: Promise<number>, graph: Graph) => {
+    refreshPromise.then(edgesAdded => {
+      props.showNotif(`${edgesAdded} new edges added!`);
+      props.drawGraph(props.graph);
+    }).catch(err => props.showError(err));
+  }
+
   return (
     <div className="input-group">
       <SearchWikiComponent searchText={pageState} modalSelect={modalSelectCallback} showError={props.showError}/>
@@ -53,7 +63,8 @@ const HeaderComponent: FC<{drawGraph: (graph: Graph) => void, showError: (errMsg
       <DropdownButton variant="secondary rounded-0" title={maxSurroundingNodes}>
         {[3, 4, 5, 6, 7, 8].map(num => <Dropdown.Item onClick={() => handleMaxSurroundingChange(num)} key={num}>{num}</Dropdown.Item>)}
       </DropdownButton>
-      <button className="btn btn-primary" onClick={handleDrawGraph}>Draw Graph</button>
+      <button className="btn btn-primary rounded-end-2" onClick={handleDrawGraph}>Draw Graph</button>
+      <RefreshEdgesComponent graph={props.graph} callback={refreshEdgesCallback} showError={props.showError}/>
     </div>
   );
 }
