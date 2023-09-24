@@ -5,8 +5,10 @@ import Graph from "graphology";
 import _ from 'lodash';
 import { MAX_SURROUNDING_NODES, setGlobalSurroundingNodes } from "../services/globals";
 import SearchWikiComponent from "./SearchWiki";
-import { DropdownButton, Dropdown } from "react-bootstrap";
+import { DropdownButton, Dropdown, Modal } from "react-bootstrap";
 import { RefreshEdgesComponent } from "./RefreshEdges";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 
 const HeaderComponent: FC<{
   graph: Graph,
@@ -16,6 +18,7 @@ const HeaderComponent: FC<{
 }> = (props) => {
 
   const [pageState, setPageState] = useState('');
+  const [show, setShow] = useState(false);
 
   // use this state variable only for rendering, use global for any other purposes
   const [maxSurroundingNodes, setMaxSurroundingState] = useState(MAX_SURROUNDING_NODES);
@@ -56,16 +59,38 @@ const HeaderComponent: FC<{
     }).catch(err => props.showError(err));
   }
 
+  const handleClose = () => {
+    setShow(false);
+  }
+
   return (
-    <div className="input-group">
-      <SearchWikiComponent searchText={pageState} modalSelect={modalSelectCallback} showError={props.showError}/>
-      <input type="text" className="form-control text-truncate" placeholder="Wiki Page" value={pageState} onChange={handlePageChange} autoFocus/>
-      <DropdownButton variant="secondary rounded-0" title={maxSurroundingNodes}>
-        {[3, 4, 5, 6, 7, 8].map(num => <Dropdown.Item onClick={() => handleMaxSurroundingChange(num)} key={num}>{num}</Dropdown.Item>)}
-      </DropdownButton>
-      <button className="btn btn-primary rounded-end-2" onClick={handleDrawGraph}>Draw Graph</button>
-      <RefreshEdgesComponent graph={props.graph} callback={refreshEdgesCallback} showError={props.showError}/>
-    </div>
+    <>
+      <div className="input-group">
+        <button className="btn text-light me-1 rounded-2" onClick={() => setShow(true)}><FontAwesomeIcon icon={faCircleInfo} /></button>
+        <SearchWikiComponent searchText={pageState} modalSelect={modalSelectCallback} showError={props.showError}/>
+        <input type="text" className="form-control text-truncate" placeholder="Wiki Page" value={pageState} onChange={handlePageChange} autoFocus/>
+        <DropdownButton variant="secondary rounded-0" title={maxSurroundingNodes}>
+          {[3, 4, 5, 6, 7, 8].map(num => <Dropdown.Item onClick={() => handleMaxSurroundingChange(num)} key={num}>{num}</Dropdown.Item>)}
+        </DropdownButton>
+        <button className="btn btn-primary rounded-end-2" onClick={handleDrawGraph}>Draw Graph</button>
+        <RefreshEdgesComponent graph={props.graph} callback={refreshEdgesCallback} showError={props.showError}/>
+      </div>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Wiki Graph</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>To begin, enter the name of a Wikipedia page in the input box.</p>
+          <p>You can either search for a page by clicking the button on the left or proceed with the page you have entered by clicking the button on the right.</p>
+          <p>Once the graph is drawn, double click on a node to expand it.</p>
+          <p>To refresh the connections between nodes, press the Refresh button.</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-secondary" onClick={handleClose}>Close</button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 }
 

@@ -53,7 +53,7 @@ const SearchWikiComponent: FC<{searchText: string, modalSelect: (page: string) =
 
   return (
     <>
-      <button className="btn btn-primary rounded-end-0" onClick={handleWikiSearch}>Search Wikipedia</button>
+      <button className="btn btn-primary rounded-end-0 rounded-start-2" onClick={handleWikiSearch}>Search Wikipedia</button>
       
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>

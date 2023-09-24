@@ -42,12 +42,14 @@ function App() {
   }
   
   return (
-    <div className="row justify-content-center">
-      <div className="mt-2" style={{ height: "5vh", width: "50vw" }}>
-        <HeaderComponent graph={graph} drawGraph={drawGraphCallback} showError={showErrorCallback} showNotif={showNotifCallback} />
-      </div>
-      <div style={{ height: "95vh", width: "100vw" }}>
-        <GraphComponent graph={graph} drawGraph={drawGraphCallback}/>
+    <>
+      <div className="row justify-content-center">
+        <div className="mt-2" style={{ height: "5vh", width: "50vw" }}>
+          <HeaderComponent graph={graph} drawGraph={drawGraphCallback} showError={showErrorCallback} showNotif={showNotifCallback} />
+        </div>
+        <div style={{ height: "95vh", width: "100vw" }}>
+          <GraphComponent graph={graph} drawGraph={drawGraphCallback}/>
+        </div>
       </div>
       <ToastContainer className="p-3" position="bottom-end" style={{ zIndex: 1 }}>
         <Toast onClose={handleCloseError} show={showError} delay={3000} bg="danger" autohide>
@@ -64,7 +66,7 @@ function App() {
           </Toast.Body>
         </Toast>
       </ToastContainer>
-    </div>
+    </>
   );
 }
 

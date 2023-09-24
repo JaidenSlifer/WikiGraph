@@ -6,6 +6,7 @@
 * ~~Add error checking for invalid wiki pages (when directly drawing graph)~~
 * Add tooltips and change buttons to icons
 * Add dynamic node sizing based on number of connections
+* Make info modal better
 
 ## Brainstorm
 * ~~Figure out how to display wiki search results~~ <- added modal
